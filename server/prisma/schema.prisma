@@ -13,18 +13,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model User {
-//   id String @id @default(uuid())
-//   name String,
-//   email String,
-//   role String,
-//   createdAt
-//   updatedAt
-// }
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique @db.VarChar(50)
+  firstName String   @map("first_name") @db.VarChar(50)
+  lastName  String   @map("last_name") @db.VarChar(50)
+  email     String   @unique @db.VarChar(50)
+  phone     String?  @db.VarChar(20)
+  role      Role     @default(USER)
+  password  String?  @db.VarChar(100)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp()
+}
 
 model Host {
   id        String      @id @default(uuid())
   ip        String      @unique
+  name      String?     @db.VarChar(50)
   hostname  String      @db.VarChar(50)
   neighbors Neighbor[]
   queryLogs queryLogs[]

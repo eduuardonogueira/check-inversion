@@ -6,13 +6,12 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class SnmpService {
   constructor(
-    private snmpRepository: SnmpRepository,
+    private readonly snmpRepository: SnmpRepository,
     private prismaService: PrismaService,
   ) {}
 
-  async getEaps(ip: string) {
+  async getLldp(ip: string) {
     const hostname = await this.snmpRepository.getHostname(ip);
-    console.log(hostname);
     const neighbors = await this.snmpRepository.getNeighbor(ip);
 
     if (!hostname && !neighbors) {
@@ -44,8 +43,7 @@ export class SnmpService {
   }
 
   async testSnmpOID(ip: string) {
-    const request = await this.snmpRepository.testOID(ip);
-
+    const request = await this.snmpRepository.getTransceivers(ip);
     return request;
   }
 }

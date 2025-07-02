@@ -4,6 +4,6 @@ import { NeighborsService } from './neighbors.service';
 
 @Module({
   controllers: [NeighborsController],
-  providers: [NeighborsService]
+  providers: [NeighborsService],
 })
 export class NeighborsModule {}

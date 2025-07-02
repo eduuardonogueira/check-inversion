@@ -6,31 +6,46 @@ import {
   Param,
   Patch,
   Post,
+  Query,
+  Req,
+  ValidationPipe,
 } from '@nestjs/common';
 import { HostsService } from './hosts.service';
 import { CreateHostDto } from './dtos/create-host.dto';
 import { UpdateHostDto } from './dtos/update-host.dto';
+import { HostsPaginationDto } from './dtos/hosts-pagination.dto';
 
-@Controller('host')
+@Controller('hosts')
 export class HostsController {
   constructor(private hostsService: HostsService) {}
-  @Get('/:id')
-  getHost(@Param('id') id: string) {
-    return this.hostsService.findOne(id);
+
+  @Get('/all')
+  async getAllUsers(
+    @Query(new ValidationPipe({ transform: true }))
+    hostsPaginationDto: HostsPaginationDto,
+    @Req() req: Request,
+  ) {
+    const { currentPage, pageSize } = hostsPaginationDto;
+    return await this.hostsService.getAll(currentPage, pageSize);
   }
 
   @Post('/create')
-  createHost(@Body() data: CreateHostDto) {
-    return this.hostsService.create(data);
+  async createHost(@Body() hostPayload: CreateHostDto) {
+    return await this.hostsService.create(hostPayload);
+  }
+
+  @Get('/:id')
+  async getHost(@Param('id') id: string) {
+    return await this.hostsService.findOne(id);
   }
 
   @Patch('/:id')
-  updateHost(@Param('id') id: string, @Body() data: UpdateHostDto) {
-    return this.hostsService.update(id, data);
+  async updateHost(@Param('id') id: string, @Body() data: UpdateHostDto) {
+    return await this.hostsService.update(id, data);
   }
 
-  @Delete(':id')
-  removeHost(@Param('id') id: string) {
-    return this.hostsService.delete(id);
+  @Delete('/:id')
+  async removeHost(@Param('id') id: string) {
+    return await this.hostsService.delete(id);
   }
 }

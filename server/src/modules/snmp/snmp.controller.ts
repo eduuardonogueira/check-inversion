@@ -4,11 +4,11 @@ import { CustomRequestDto } from './dtos/custom-request.dto';
 
 @Controller('snmp')
 export class SnmpController {
-  constructor(private snmpService: SnmpService) {}
+  constructor(private readonly snmpService: SnmpService) {}
 
-  @Get('/eaps/:ip')
-  eapsRequest(@Param('ip') ip: string) {
-    return this.snmpService.getEaps(ip);
+  @Get('/lldp/:ip')
+  lldpRequest(@Param('ip') ip: string) {
+    return this.snmpService.getLldp(ip);
   }
 
   @Get('/uptime/:ip')
@@ -25,7 +25,6 @@ export class SnmpController {
   customRequest(
     @Query(new ValidationPipe({ whitelist: true })) querys: CustomRequestDto,
   ) {
-    console.log(querys);
     return this.snmpService.snmpCustom(querys);
   }
 }

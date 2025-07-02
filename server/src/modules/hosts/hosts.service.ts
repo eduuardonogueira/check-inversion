@@ -7,6 +7,26 @@ import { UpdateHostDto } from './dtos/update-host.dto';
 export class HostsService {
   constructor(private prisma: PrismaService) {}
 
+  async getAll(currentPage: number, pageSize: number) {
+    const hosts = await this.prisma.host.findMany({
+      skip: (currentPage - 1) * pageSize,
+      take: pageSize,
+      include: { neighbors: true },
+    });
+
+    if (!hosts) {
+      throw new NotFoundException('Products not found');
+    }
+
+    const total = await this.prisma.host.count();
+    const pageQty = Math.ceil(total / pageSize);
+
+    return {
+      data: hosts,
+      pagination: { currentPage, pageSize, pageQty, total },
+    };
+  }
+
   async findOne(
     id?: string,
     hostname?: string,
