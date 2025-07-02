@@ -17,15 +17,12 @@ export class AuthController {
   @Post('/login')
   async sigIn(
     @Body() authPayload: { username: string; password: string },
-  ): Promise<{ accessToken: string; role: string; username: string }> {
+  ): Promise<{ accessToken: string }> {
     const { username, password } = authPayload;
 
     try {
-      const { accessToken, role } = await this.authService.SignIn(
-        username,
-        password,
-      );
-      return { accessToken, role, username };
+      const response = await this.authService.SignIn(username, password);
+      return response;
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
