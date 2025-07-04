@@ -1,38 +1,26 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guard/jwt.guard';
+import { JwtGuard } from './guard/jwt.guard';
+import { LocalGuard } from './guard/local.guard';
+import { UserDto } from '../users/dtos/user.dto';
+import { Serialize } from 'src/interceptors/serialize.interceptors';
+import { CurrentUser } from 'src/decorators/currentUser.decorator';
+import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @UseGuards(LocalGuard)
   @Post('/login')
-  async sigIn(
-    @Body() authPayload: { username: string; password: string },
-  ): Promise<{ accessToken: string }> {
-    const { username, password } = authPayload;
-
-    try {
-      const response = await this.authService.SignIn(username, password);
-      return response;
-    } catch (error) {
-      throw new HttpException(error.message, error.status);
-    }
+  async login(@CurrentUser() user: User): Promise<{ accessToken: string }> {
+    return await this.authService.login(user);
   }
 
+  // @Serialize(UserDto)
+  @UseGuards(JwtGuard)
   @Get('/profile')
-  @UseGuards(JwtAuthGuard)
-  async profile(@Req() req: Request) {
-    console.log(req);
-
-    return 'oi';
+  async profile(@CurrentUser() user: User) {
+    return user;
   }
 }

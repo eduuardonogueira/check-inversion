@@ -25,7 +25,7 @@ export class AuthService {
     const findUserOnDb = await this.usersService.findOne({ username });
 
     if (!findUserOnDb || !findUserOnDb.password) {
-      this.logger.log(`User ${username} does not exist in the Database`);
+      this.logger.log(`User ${username} is logging with ldap`);
 
       const isAuthenticated = await this.ldapService.validateUser(
         username,
@@ -51,18 +51,12 @@ export class AuthService {
     return findUserOnDb;
   }
 
-  // methode signin with ldap
-  async SignIn(
-    username: string,
-    password: string,
-  ): Promise<{ accessToken: string }> {
-    const userPayload = await this.validateUser(username, password);
-
+  async login(user: User): Promise<{ accessToken: string }> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: userPassword, ...payload } = userPayload;
+    const { password: userPassword, ...payload } = user;
 
     this.logger.warn(
-      `User ${userPayload.username} has been successfully authenticated`,
+      `User ${user.username} has been successfully authenticated`,
     );
 
     const token = this.jwtService.sign(payload, {

@@ -5,15 +5,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { LdapStrategy } from './strategies/ldap.startegy';
 import { PrismaService } from '../prisma/prisma.service';
 import { LdapService } from './ldap.service';
+import configuration from 'src/config/configuration';
+import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule,
     JwtModule.register({
-      secret: process.env.jwtSecret,
+      secret: configuration().jwtSecret,
       signOptions: { expiresIn: '24h' },
     }),
   ],
@@ -22,7 +23,7 @@ import { LdapService } from './ldap.service';
     AuthService,
     UsersService,
     JwtStrategy,
-    LdapStrategy,
+    LocalStrategy,
     PrismaService,
     LdapService,
   ],

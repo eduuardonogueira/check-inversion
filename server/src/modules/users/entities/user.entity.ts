@@ -8,7 +8,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export enum UserRole {
+export enum UserRoles {
   USER = 'USER',
   ADMIN = 'ADMIN',
 }
@@ -43,7 +43,7 @@ export class UserEntity {
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }) => ('' + value).toUpperCase())
-  @IsEnum(UserRole)
+  @IsEnum(UserRoles)
   role: 'USER' | 'ADMIN';
 
   @IsOptional()

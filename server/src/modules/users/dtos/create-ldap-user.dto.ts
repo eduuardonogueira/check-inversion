@@ -1,6 +1,5 @@
 import { IsOptional } from 'class-validator';
-import { UserEntity } from './user-entity.dto';
-
+import { UserEntity } from '../entities/user.entity';
 export class CreateLdapUserDto extends UserEntity {
   @IsOptional()
   password?: string;

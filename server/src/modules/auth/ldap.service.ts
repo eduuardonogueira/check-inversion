@@ -4,7 +4,6 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ldapAttributes } from '../../config/configuration';
 import configuration from '../../config/configuration';
 import * as ldap from 'ldapjs';
 import { UsersService } from '../users/users.service';
@@ -54,7 +53,7 @@ export class LdapService {
       const searchOptions: ldap.SearchOptions = {
         scope: 'sub',
         filter: `(uid=${uid})`,
-        attributes: ldapAttributes,
+        attributes: configuration().ldapAttributes,
       };
       const user: any = {};
       this.client.search(this.baseDn, searchOptions, (err, res) => {
@@ -105,8 +104,6 @@ export class LdapService {
 
     this.logger.log(`===> checking username in database => ${username}`);
     const findUserFromDb = await this.usersService.findOne({ username });
-
-    console.log('chegou aqui');
 
     if (!findUserFromDb) {
       this.logger.log('===> user does not exist on database');

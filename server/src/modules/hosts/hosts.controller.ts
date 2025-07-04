@@ -7,23 +7,24 @@ import {
   Patch,
   Post,
   Query,
-  Req,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { HostsService } from './hosts.service';
 import { CreateHostDto } from './dtos/create-host.dto';
 import { UpdateHostDto } from './dtos/update-host.dto';
 import { HostsPaginationDto } from './dtos/hosts-pagination.dto';
+import { JwtGuard } from '../auth/guard/jwt.guard';
 
+@UseGuards(JwtGuard)
 @Controller('hosts')
 export class HostsController {
   constructor(private hostsService: HostsService) {}
 
   @Get('/all')
-  async getAllUsers(
+  async getAllHosts(
     @Query(new ValidationPipe({ transform: true }))
     hostsPaginationDto: HostsPaginationDto,
-    @Req() req: Request,
   ) {
     const { currentPage, pageSize } = hostsPaginationDto;
     return await this.hostsService.getAll(currentPage, pageSize);
