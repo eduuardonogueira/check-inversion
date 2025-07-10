@@ -8,22 +8,25 @@ import {
   Post,
   Query,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
 import { HostsService } from './hosts.service';
 import { CreateHostDto } from './dtos/create-host.dto';
 import { UpdateHostDto } from './dtos/update-host.dto';
 import { HostsPaginationDto } from './dtos/hosts-pagination.dto';
 import { JwtGuard } from '../auth/guard/jwt.guard';
+import { SnmpService } from '../snmp/snmp.service';
 
 @UseGuards(JwtGuard)
 @Controller('hosts')
 export class HostsController {
-  constructor(private hostsService: HostsService) {}
+  constructor(
+    private hostsService: HostsService,
+    private snmpService: SnmpService,
+  ) {}
 
-  @Get('/all')
+  @Get()
   async getAllHosts(
-    @Query(new ValidationPipe({ transform: true }))
+    @Query()
     hostsPaginationDto: HostsPaginationDto,
   ) {
     const { currentPage, pageSize } = hostsPaginationDto;
@@ -33,6 +36,13 @@ export class HostsController {
   @Post('/create')
   async createHost(@Body() hostPayload: CreateHostDto) {
     return await this.hostsService.create(hostPayload);
+  }
+
+  @Post('/create/auto')
+  async createHostAutomatically(@Body() body: { ip: string }) {
+    const hostData = await this.snmpService.getLldp(body.ip);
+    const createdHost = await this.hostsService.create(hostData);
+    return createdHost;
   }
 
   @Get('/:id')

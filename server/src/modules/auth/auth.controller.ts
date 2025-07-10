@@ -2,8 +2,6 @@ import { Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtGuard } from './guard/jwt.guard';
 import { LocalGuard } from './guard/local.guard';
-import { UserDto } from '../users/dtos/user.dto';
-import { Serialize } from 'src/interceptors/serialize.interceptors';
 import { CurrentUser } from 'src/decorators/currentUser.decorator';
 import { User } from '@prisma/client';
 

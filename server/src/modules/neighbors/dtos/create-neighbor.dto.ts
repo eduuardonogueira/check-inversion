@@ -1,16 +1,15 @@
-import { IsString, Max, Min } from 'class-validator';
+import { IsString, MaxLength, Length } from 'class-validator';
 
 export class CreateNeighborDto {
-  @Max(30)
+  @MaxLength(50)
   @IsString()
   hostname: string;
 
-  @Max(2)
+  @MaxLength(2)
   @IsString()
   port: string;
 
-  @Max(5)
-  @Min(3)
+  @Length(3, 5)
   @IsString()
   remotePort: string;
 }

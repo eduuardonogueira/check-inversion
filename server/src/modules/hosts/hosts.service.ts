@@ -65,19 +65,30 @@ export class HostsService {
   async create(host: CreateHostDto) {
     const createHost = await this.prisma.host.create({
       data: {
-        hostname: host.hostname,
-        ip: host.ip,
-        neighbors: {
-          create: host.neighbors.map((neighbor) => ({
-            hostname: neighbor.hostname,
-            port: neighbor.port,
-            remotePort: neighbor.remotePort,
-          })),
-        },
+        ...host,
+        neighbors: host.neighbors
+          ? {
+              create: host.neighbors.map((neighbor) => ({
+                hostname: neighbor.hostname,
+                port: neighbor.port,
+                remotePort: neighbor.remotePort,
+              })),
+            }
+          : {},
       },
+      include: { neighbors: true },
     });
 
     return createHost;
+  }
+
+  async createMany(hostArray: CreateHostDto[]) {
+    const createManyHosts = await this.prisma.host.createMany({
+      data: hostArray,
+      skipDuplicates: true,
+    });
+
+    return createManyHosts;
   }
 
   async update(id: string, host: UpdateHostDto) {
@@ -96,6 +107,7 @@ export class HostsService {
           },
         },
       },
+      include: { neighbors: true },
     });
 
     return updatedHost;

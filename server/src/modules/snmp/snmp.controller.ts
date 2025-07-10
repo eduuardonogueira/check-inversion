@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { SnmpService } from './snmp.service';
 import { CustomRequestDto } from './dtos/custom-request.dto';
 
@@ -7,24 +7,22 @@ export class SnmpController {
   constructor(private readonly snmpService: SnmpService) {}
 
   @Get('/lldp/:ip')
-  lldpRequest(@Param('ip') ip: string) {
-    return this.snmpService.getLldp(ip);
+  async lldpRequest(@Param('ip') ip: string) {
+    return await this.snmpService.getLldp(ip);
   }
 
   @Get('/uptime/:ip')
-  uptimeRequest(@Param('ip') ip: string) {
-    return this.snmpService.getUptime(ip);
+  async uptimeRequest(@Param('ip') ip: string) {
+    return await this.snmpService.getUptime(ip);
   }
 
   @Get('/test/:ip')
-  testRequest(@Param('ip') ip: string) {
-    return this.snmpService.testSnmpOID(ip);
+  async testRequest(@Param('ip') ip: string) {
+    return await this.snmpService.testSnmpOID(ip);
   }
 
   @Get('/custom')
-  customRequest(
-    @Query(new ValidationPipe({ whitelist: true })) querys: CustomRequestDto,
-  ) {
-    return this.snmpService.snmpCustom(querys);
+  async customRequest(@Query() querys: CustomRequestDto) {
+    return await this.snmpService.snmpCustom(querys);
   }
 }

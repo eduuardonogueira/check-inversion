@@ -44,7 +44,7 @@ export class SnmpRepository {
     return varbinds.find((valuesOid) => valuesOid.oid.includes(index)).value;
   }
 
-  async getHostname(ip: string) {
+  async getHostname(ip: string): Promise<string> {
     try {
       const consult = await this.snmpMethods.subtree(
         ip,
@@ -60,7 +60,13 @@ export class SnmpRepository {
     }
   }
 
-  async getNeighbor(ip: string) {
+  async getNeighbor(ip: string): Promise<
+    {
+      hostname: string;
+      port: string;
+      remotePort: string;
+    }[]
+  > {
     try {
       const result = await this.snmpMethods.subtree(
         ip,
@@ -79,7 +85,7 @@ export class SnmpRepository {
       );
 
       const data = neighbors.map((_, index) => ({
-        hostname: neighbors[index],
+        hostname: neighbors[index].toString(),
         port: ports[index],
         remotePort: `${stacks[index]}:${remotePorts[index]}`,
       }));

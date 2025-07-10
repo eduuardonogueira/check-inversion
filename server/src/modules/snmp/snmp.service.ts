@@ -1,14 +1,10 @@
 import { NotFoundException, Injectable } from '@nestjs/common';
 import { SnmpRepository } from './snmp.repository';
 import { CustomRequestDto } from './dtos/custom-request.dto';
-import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class SnmpService {
-  constructor(
-    private readonly snmpRepository: SnmpRepository,
-    private prismaService: PrismaService,
-  ) {}
+  constructor(private readonly snmpRepository: SnmpRepository) {}
 
   async getLldp(ip: string) {
     const hostname = await this.snmpRepository.getHostname(ip);

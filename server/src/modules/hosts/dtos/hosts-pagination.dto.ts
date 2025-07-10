@@ -1,4 +1,4 @@
-import { Transform } from '@nestjs/class-transformer';
+import { Transform } from 'class-transformer';
 import { IsInt, IsOptional, Min } from 'class-validator';
 
 export class HostsPaginationDto {
@@ -6,11 +6,11 @@ export class HostsPaginationDto {
   @Transform(({ value }) => parseInt(value))
   @IsInt()
   @Min(1)
-  currentPage: number;
+  currentPage: number = 1;
 
   @IsOptional()
   @Transform(({ value }) => parseInt(value))
   @IsInt()
   @Min(1)
-  pageSize: number;
+  pageSize: number = 10;
 }
