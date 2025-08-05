@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { oidTable } from './helpers/oidTable';
 import { Varbinds } from './helpers/types';
 import { SnmpMethods } from './snmp.methods';
+import configuration from 'src/config/configuration';
 
 export interface Gbic {
   id: number;
@@ -46,9 +47,10 @@ export class SnmpRepository {
 
   async getHostname(ip: string): Promise<string> {
     try {
+      const community = configuration().community;
       const consult = await this.snmpMethods.subtree(
         ip,
-        'v1a1pe@RNPcom91',
+        community,
         oidTable.hostname,
       );
 
@@ -68,9 +70,10 @@ export class SnmpRepository {
     }[]
   > {
     try {
+      const community = configuration().community;
       const result = await this.snmpMethods.subtree(
         ip,
-        'v1a1pe@RNPcom91',
+        community,
         oidTable.eaps,
       );
 
@@ -93,6 +96,35 @@ export class SnmpRepository {
       return data;
     } catch (error) {
       console.error('Error getting neighbors: ', error);
+      throw new HttpException(error || 'Internal server error', 500);
+    }
+  }
+
+  async getUptime(ip: string): Promise<any> {
+    try {
+      const community = configuration().community;
+      const result = await this.snmpMethods.subtree(
+        ip,
+        community,
+        oidTable.uptime,
+      );
+
+      const [timeticks] = this.filterByOid(result, '1.3.6.1.2.1.1.3.0');
+
+      console.log(timeticks);
+
+      if (typeof timeticks === 'number') {
+        const milliseconds = timeticks * 10;
+
+        const now = Date.now();
+        const date = new Date(now - milliseconds);
+
+        return {
+          uptime: date,
+        };
+      }
+    } catch (error) {
+      console.error('Error getting uptime: ', error);
       throw new HttpException(error || 'Internal server error', 500);
     }
   }

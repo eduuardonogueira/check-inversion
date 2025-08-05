@@ -7,6 +7,7 @@ export const oidTable = {
     remotePort: '1.3.6.1.4.1.1916.1.13.2.1.6',
   },
   uptime: '1.3.6.1.2.1.1',
+  teste: '1.3.6.1.2.1.1.3.0',
 };
 
 /*

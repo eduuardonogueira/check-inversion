@@ -1,5 +1,6 @@
 export default () => ({
   NODE_ENV: process.env.NODE_ENV,
+  community: process.env.COMMUNITY_HOST,
   port: parseInt(process.env.PORT, 10) || 3001,
   jwtSecret:
     process.env.JWT_SECRET ||

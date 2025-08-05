@@ -23,8 +23,8 @@ export class SnmpService {
     return host;
   }
 
-  async getUptime(_ip: string) {
-    return 'Coming soon';
+  async getUptime(ip: string) {
+    return await this.snmpRepository.getUptime(ip);
   }
 
   async snmpCustom(querys: CustomRequestDto) {
